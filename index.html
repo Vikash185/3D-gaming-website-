@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Akuma Kage — Mythic Demon-Slayer RPG</title>
+  <meta name="description" content="Akuma Kage — a cursed swordsman hunts demons across a shattered empire." />
+  <meta name="theme-color" content="#14120f" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700&text=%E5%BD%B1%E5%BA%8F%E7%AB%A0%E6%82%AA%E9%AD%94&display=swap" rel="stylesheet" />
+  <link rel="preload" href="models/akuma-warrior.glb" as="fetch" type="model/gltf-binary" crossorigin />
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/",
+        "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/index.js",
+        "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js",
+        "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.mjs"
+      }
+    }
+  </script>
+</head>
+<body class="is-loading">
+  <!-- Preloader / enter gate (a click is needed before browsers allow audio) -->
+  <div class="loader" data-loader>
+    <div class="loader__half loader__half--a" aria-hidden="true"></div>
+    <div class="loader__half loader__half--b" aria-hidden="true"></div>
+    <div class="loader__montage" data-loader-montage aria-hidden="true">
+      <img src="media/services/01-crimson-eclipse.webp" alt="" />
+      <img src="media/services/12-infernal-bargain.webp" alt="" />
+      <img src="media/services/02-nine-tails.webp" alt="" />
+      <img src="media/services/03-higanbana-duel.webp" alt="" />
+    </div>
+    <canvas class="loader__embers" data-loader-embers aria-hidden="true"></canvas>
+    <svg class="loader__katana" data-loader-katana viewBox="0 0 1000 80" aria-hidden="true">
+      <defs>
+        <linearGradient id="kt-steel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#5c6068" />
+          <stop offset="0.45" stop-color="#d9dde4" />
+          <stop offset="0.62" stop-color="#9aa0aa" />
+          <stop offset="1" stop-color="#f4f6fa" />
+        </linearGradient>
+        <linearGradient id="kt-gold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f3cf7a" />
+          <stop offset="1" stop-color="#8a5a1c" />
+        </linearGradient>
+        <pattern id="kt-ito" width="26" height="34" patternUnits="userSpaceOnUse" y="23">
+          <rect width="26" height="34" fill="#4a0a0e" />
+          <path d="M13 3 L23 17 L13 31 L3 17 Z" fill="#d8ccb4" />
+          <path d="M13 9 L18 17 L13 25 L8 17 Z" fill="#1a0a0a" />
+        </pattern>
+        <filter id="kt-glow" x="-10%" y="-200%" width="120%" height="500%">
+          <feGaussianBlur stdDeviation="5" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+      <rect x="2" y="25" width="14" height="30" rx="5" fill="url(#kt-gold)" />
+      <rect x="14" y="23" width="236" height="34" rx="9" fill="url(#kt-ito)" />
+      <ellipse cx="262" cy="40" rx="12" ry="40" fill="#1c1716" stroke="url(#kt-gold)" stroke-width="3" />
+      <rect x="274" y="27" width="26" height="26" rx="3" fill="url(#kt-gold)" />
+      <g filter="url(#kt-glow)">
+        <path d="M300 28 C520 26 760 20 958 14 L996 22 C900 32 620 46 300 52 Z" fill="url(#kt-steel)" />
+        <path d="M300 45 C330 41 350 47 380 43 S430 47 460 42 S520 46 550 41 S610 44 640 39 S700 42 730 37 S790 39 820 34 S880 35 910 30 S960 28 990 23"
+              fill="none" stroke="#ff4a3a" stroke-width="2.2" stroke-opacity="0.9" />
+      </g>
+    </svg>
+    <div class="loader__slash" data-loader-slash aria-hidden="true"></div>
+    <div class="loader__ui" data-loader-ui>
+      <p class="loader__corner loader__corner--tl"><span class="loader__dot"></span>Prologue · 序章</p>
+      <p class="loader__corner loader__corner--tr">MMXXVII</p>
+      <div class="loader__inner">
+        <div class="loader__seal">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle class="loader__ring-bg" cx="100" cy="100" r="92" />
+            <circle class="loader__ring-ticks" cx="100" cy="100" r="80" />
+            <circle class="loader__ring" cx="100" cy="100" r="92" data-loader-ring />
+          </svg>
+          <span class="loader__kanji" aria-hidden="true">影</span>
+        </div>
+        <p class="loader__brand">AKUMA<sup>®</sup>KAGE</p>
+        <p class="loader__meta"><span data-loader-label>Waking the demon</span><span data-loader-pct>0%</span></p>
+        <div class="loader__actions" data-loader-actions hidden>
+          <button class="pill pill--light" type="button" data-enter="sound">
+            <span class="pill__eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            Enter with music
+          </button>
+          <button class="loader__mute" type="button" data-enter="muted">Enter in silence</button>
+        </div>
+      </div>
+      <p class="loader__ticker" data-loader-ticker>Forging the steel</p>
+      <p class="loader__corner loader__corner--br">Best with headphones</p>
+    </div>
+  </div>
+
+  <!-- Global top bar -->
+  <header class="topbar" data-topbar>
+    <div class="topbar__left">
+      <button class="pill" type="button" data-intro-only data-trailer>
+        <span>Play teaser</span>
+        <span class="pill__icon" aria-hidden="true">
+          <svg viewBox="0 0 10 10"><path d="M3 2l5 3-5 3z" fill="currentColor" /></svg>
+        </span>
+      </button>
+      <a class="logo" href="#hero" aria-label="Akuma Kage home" data-logo>
+        <span class="logo__bar" aria-hidden="true"></span>akuma<sup>®</sup>
+      </a>
+    </div>
+    <p class="topbar__label" data-intro-only>Mythic demon&#8209;slayer RPG</p>
+    <div class="topbar__right">
+      <a class="pill" href="#pacts" data-intro-only>
+        <span>Reserve a copy</span>
+        <span class="pill__icon" aria-hidden="true">
+          <svg viewBox="0 0 10 10"><path d="M3 2h5v5M8 2L2 8" stroke="currentColor" stroke-width="1.2" fill="none" /></svg>
+        </span>
+      </a>
+      <button class="round-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu" data-menu-toggle>
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5h6M3 7.5h6" stroke="currentColor" stroke-width="1.2" /></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero" aria-label="Akuma Kage">
+      <div class="hero__stage" data-stage>
+        <canvas class="hero__canvas" data-canvas aria-hidden="true"></canvas>
+
+        <!-- Scroll chapters (flip in line by line) -->
+        <article class="chapter chapter--right" data-chapter="2">
+          <p class="chapter__index"><span>0</span><span>2</span><span>/</span></p>
+          <h2 class="chapter__title">
+            <span class="chapter__line">Feed the mask,</span>
+            <span class="chapter__line">lose the man</span>
+          </h2>
+          <p class="chapter__body">
+            <span class="chapter__line">Every demon you slay feeds the mask on your face. Its power</span>
+            <span class="chapter__line">grows, and so does its hunger for the person you were.</span>
+          </p>
+        </article>
+
+        <article class="chapter chapter--left" data-chapter="3">
+          <p class="chapter__index"><span>0</span><span>3</span><span>/</span></p>
+          <h2 class="chapter__title">
+            <span class="chapter__line">No master,</span>
+            <span class="chapter__line">no mercy</span>
+          </h2>
+          <p class="chapter__body">
+            <span class="chapter__line">Sworn to no shogun, you sell your steel to the desperate</span>
+            <span class="chapter__line">and hunt whatever hides in the dark between the villages.</span>
+          </p>
+        </article>
+
+        <!-- Bottom HUD -->
+        <footer class="hud" data-hud>
+          <div class="hud__left">
+            <a class="pill" href="#contracts">
+              <span>Journey</span>
+              <span class="pill__icon" aria-hidden="true">
+                <svg viewBox="0 0 10 10"><path d="M2 8L8 2M4 2h4v4" stroke="currentColor" stroke-width="1.1" fill="none" /></svg>
+              </span>
+            </a>
+            <a class="round-btn round-btn--sm" href="#footer" aria-label="Community">
+              <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 9V5l2-2 2 2 2-2 2 2v4" stroke="currentColor" stroke-width="1.1" fill="none" /></svg>
+            </a>
+          </div>
+          <div class="hud__center">
+            <span class="hud__hint">Hit</span>
+            <button class="keycap" type="button" data-switch aria-pressed="false">
+              <span data-switch-label>Space</span>
+            </button>
+            <span class="hud__hint">to <span data-switch-verb>unleash</span></span>
+          </div>
+          <div class="hud__right">
+            <a class="hud__link" href="#realm">Codex <span aria-hidden="true">&#8599;</span></a>
+            <button class="sound" type="button" data-sound aria-pressed="false" aria-label="Toggle music">
+              <span class="sound__label" aria-hidden="true" data-sound-label>Music off</span>
+              <span class="sound__bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+            </button>
+          </div>
+        </footer>
+
+        <div class="hero__fade" aria-hidden="true"></div>
+      </div>
+
+      <!-- Intro: giant wordmark + two statements. Scrolls away while the camera starts to orbit. -->
+      <div class="hero__intro" data-intro>
+        <h1 class="wordmark" aria-label="Akuma Kage">
+          <span class="wordmark__line" aria-hidden="true">
+            <span class="wordmark__char">A</span><span class="wordmark__char">K</span><span class="wordmark__char">U</span><span class="wordmark__char">M</span><span class="wordmark__char">A</span><span class="wordmark__char wordmark__reg">®</span><span class="wordmark__char">K</span><span class="wordmark__char">A</span><span class="wordmark__char">G</span><span class="wordmark__char">E</span>
+          </span>
+        </h1>
+        <div class="hero__statements">
+          <p><b>Real-time 3D</b> and carved<br />from a shattered<br />empire</p>
+          <p>Roam <b>36 haunted</b><br /><b>domains</b> as the<br />last cursed blade</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · The realm: title + endless reel of paintings -->
+    <section class="realm grain" id="realm" aria-labelledby="realm-title">
+      <div class="section-top">
+        <p class="section-index" aria-hidden="true"><span>0</span><span>4</span><span>/</span></p>
+        <h2 class="section-label">The realm</h2>
+        <p class="section-label section-label--dim">Kurayami era · 1588</p>
+      </div>
+      <div class="realm__head">
+        <h3 class="realm__title" id="realm-title">
+          <span class="realm__line"><span>An empire</span></span>
+          <span class="realm__line"><span>left to the</span></span>
+          <span class="realm__line"><span><em>demons</em></span></span>
+        </h3>
+        <div class="realm__lede">
+          <p>The emperor fell and the demons he chained broke loose. Thirty-six domains smoulder under a crimson sky, temples crumble and black rivers ferry the restless dead.</p>
+          <p class="realm__kicker">Only one sword is still for sale, and it hides behind a demon's grin.</p>
+        </div>
+      </div>
+
+      <div class="reel" data-reel aria-label="Scenes from the realm">
+        <div class="reel__row" data-reel-row="-1"></div>
+        <div class="reel__row" data-reel-row="1"></div>
+      </div>
+
+      <dl class="world__stats realm__stats">
+        <div><dt>Haunted domains</dt><dd data-count="36">36</dd></div>
+        <div><dt>Demon masks</dt><dd data-count="96">96</dd></div>
+        <div><dt>Warlord generals</dt><dd data-count="7">7</dd></div>
+        <div><dt>Blades per hunt</dt><dd data-count="3">3</dd></div>
+      </dl>
+    </section>
+
+    <!-- 05 · Blood contracts: fourteen glass cards spiral around a giant cursed katana -->
+    <section class="services" id="contracts" aria-labelledby="contracts-title">
+      <div class="services__stage" data-services-stage>
+        <canvas class="services__canvas" data-services-canvas aria-hidden="true"></canvas>
+
+        <header class="services__head">
+          <div class="section-top">
+            <p class="section-index" aria-hidden="true"><span>0</span><span>5</span><span>/</span></p>
+            <h2 class="section-label" id="contracts-title">Blood contracts</h2>
+          </div>
+          <p class="services__lede">Fourteen jobs that honest blades refuse.<br />Set your fee, wanderer.</p>
+        </header>
+
+        <aside class="services__detail" data-detail aria-label="Contract at the front">
+          <p class="detail__count"><span data-d-index>01</span><span class="detail__of">/ 14</span></p>
+          <p class="detail__cat" data-d-cat>Hunts</p>
+          <h3 class="detail__title" data-d-title>Crimson Eclipse</h3>
+          <p class="detail__client">Patron <span aria-hidden="true">—</span> <span data-d-client>Governor of Kamakura</span></p>
+          <p class="detail__text" data-d-text></p>
+          <dl class="detail__meta">
+            <div><dt>Bounty</dt><dd data-d-reward></dd></div>
+            <div><dt>Threat</dt><dd class="detail__danger" data-d-danger></dd></div>
+          </dl>
+          <a class="pill pill--accent" href="#pacts">
+            <span>Accept the job</span>
+            <span class="pill__icon" aria-hidden="true">
+              <svg viewBox="0 0 10 10"><path d="M3 2h5v5M8 2L2 8" stroke="currentColor" stroke-width="1.2" fill="none" /></svg>
+            </span>
+          </a>
+        </aside>
+
+        <div class="services__finder" data-finder>
+          <p class="finder__q">What do you seek?</p>
+          <ul class="finder__list" data-finder-list></ul>
+          <form class="finder__ask" data-ask role="search">
+            <label class="visually-hidden" for="ask-wanderer">Search the contracts</label>
+            <input id="ask-wanderer" type="search" placeholder="Ask the wanderer…" autocomplete="off" spellcheck="false" />
+          </form>
+          <p class="finder__msg" data-ask-msg aria-live="polite"></p>
+        </div>
+
+        <nav class="services__rail" aria-label="Contracts">
+          <ol data-rail></ol>
+        </nav>
+
+        <p class="services__hint" data-services-hint aria-hidden="true">
+          <span>Scroll to spin the blade</span><span class="services__hint-dot"></span><span>Hover a card to thaw the glass</span>
+        </p>
+      </div>
+
+      <!-- Every contract as plain HTML: for assistive tech, and the layout when WebGL is off -->
+      <ol class="services__list" data-services-list></ol>
+    </section>
+
+    <!-- 06 · Way of the blade -->
+    <section class="arsenal grain" id="way" aria-labelledby="way-title">
+      <div class="arsenal__stage" data-arsenal-stage>
+        <div class="arsenal__col">
+          <div class="section-top">
+            <p class="section-index" aria-hidden="true"><span>0</span><span>6</span><span>/</span></p>
+            <h2 class="section-label" id="way-title">Way of the blade</h2>
+          </div>
+          <ol class="arsenal__list" data-arsenal-list>
+            <li><button type="button" data-feature="0"><span class="arsenal__n">01</span><span class="arsenal__name">Feed the mask</span></button></li>
+            <li><button type="button" data-feature="1"><span class="arsenal__n">02</span><span class="arsenal__name">Shift your stance</span></button></li>
+            <li><button type="button" data-feature="2"><span class="arsenal__n">03</span><span class="arsenal__name">Awaken the demon</span></button></li>
+            <li><button type="button" data-feature="3"><span class="arsenal__n">04</span><span class="arsenal__name">Slay the yokai</span></button></li>
+            <li><button type="button" data-feature="4"><span class="arsenal__n">05</span><span class="arsenal__name">Hunt as a pack</span></button></li>
+          </ol>
+        </div>
+        <div class="arsenal__media">
+          <figure class="arsenal__frame" data-arsenal-frame>
+            <img class="arsenal__layer" src="media/services/13-carvers-secret.webp" alt="The swordsman studies a cracked demon mask by candlelight" loading="lazy" decoding="async" />
+            <img class="arsenal__layer" src="media/services/11-scarlet-downpour.webp" alt="A drawn blade leaves a red arc through the rain" loading="lazy" decoding="async" />
+            <img class="arsenal__layer" src="media/services/12-infernal-bargain.webp" alt="The swordsman erupts in crimson hellfire" loading="lazy" decoding="async" />
+            <img class="arsenal__layer" src="media/services/02-nine-tails.webp" alt="The swordsman faces a nine-tailed fox spirit" loading="lazy" decoding="async" />
+            <video class="arsenal__layer" src="media/services/14-underworld-gate.mp4" poster="media/services/14-underworld-gate.webp" muted loop playsinline preload="none" aria-label="Masked swordsmen face the burning gate of the underworld"></video>
+            <figcaption class="arsenal__hud" aria-hidden="true">
+              <span class="arsenal__rec"><i></i>Key art</span>
+              <span data-arsenal-count>01 / 05</span>
+            </figcaption>
+          </figure>
+          <div class="arsenal__copy">
+            <p class="arsenal__text" data-arsenal-text></p>
+            <ul class="arsenal__tags" data-arsenal-tags></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · The domains: drag slider -->
+    <section class="domains grain" id="domains" aria-labelledby="domains-title">
+      <div class="section-top">
+        <p class="section-index" aria-hidden="true"><span>0</span><span>7</span><span>/</span></p>
+        <p class="section-label">The domains</p>
+        <p class="section-label section-label--dim">Drag, swipe or use the arrows</p>
+      </div>
+      <div class="domains__head">
+        <h2 class="domains__title" id="domains-title"><span class="domains__line">Thirty-six</span> <span class="domains__line"><em>roads</em> to hell</span></h2>
+        <div class="domains__nav">
+          <p class="domains__count"><b data-dom-index>01</b><span>/ 10</span></p>
+          <button class="round-btn domains__btn" type="button" aria-label="Previous domain" data-dom-prev>
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 2.5L4 6l3.5 3.5" stroke="currentColor" stroke-width="1.2" fill="none" /></svg>
+          </button>
+          <button class="round-btn domains__btn" type="button" aria-label="Next domain" data-dom-next>
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2.5L8 6 4.5 9.5" stroke="currentColor" stroke-width="1.2" fill="none" /></svg>
+          </button>
+        </div>
+      </div>
+      <div class="domains__viewport" data-dom-viewport tabindex="0" aria-roledescription="carousel" aria-label="The domains">
+        <ul class="domains__track" data-dom-track></ul>
+      </div>
+      <div class="domains__foot">
+        <div class="domains__progress"><span data-dom-progress></span></div>
+        <p class="domains__lord">Domain lord <span aria-hidden="true">—</span> <b data-dom-lord>The Eclipse Warlord</b></p>
+      </div>
+    </section>
+
+    <!-- 08 · Pacts (pre-order) -->
+    <section class="editions grain" id="pacts" aria-labelledby="pacts-title">
+      <div class="section-top">
+        <p class="section-index" aria-hidden="true"><span>0</span><span>8</span><span>/</span></p>
+        <p class="section-label">Reserve</p>
+        <p class="section-label section-label--dim">Launch 13.08.2027</p>
+      </div>
+      <div class="editions__head">
+        <h2 class="editions__title" id="pacts-title"><span class="editions__line">Pick</span> <span class="editions__line">your pact</span></h2>
+        <div class="editions__side">
+          <p class="countdown" data-countdown aria-label="Time until launch">
+            <span><b data-cd="d">000</b><i>days</i></span>
+            <span><b data-cd="h">00</b><i>hrs</i></span>
+            <span><b data-cd="m">00</b><i>min</i></span>
+            <span><b data-cd="s">00</b><i>sec</i></span>
+          </p>
+          <div class="platforms" role="radiogroup" aria-label="Platform" data-platforms>
+            <button type="button" role="radio" aria-checked="true" data-platform="PlayStation 5">PS5</button>
+            <button type="button" role="radio" aria-checked="false" data-platform="Xbox Series X|S">Xbox Series X|S</button>
+            <button type="button" role="radio" aria-checked="false" data-platform="PC">PC</button>
+          </div>
+        </div>
+      </div>
+      <div class="editions__grid">
+        <article class="edition">
+          <figure class="edition__art"><img src="media/editions/wanderer.webp" alt="Wanderer edition cover: the swordsman under a blood moon" loading="lazy" decoding="async" /></figure>
+          <div class="edition__body">
+            <header class="edition__head"><h3>Wanderer</h3><p class="edition__price">$59.99</p></header>
+            <ul class="edition__list">
+              <li>Akuma Kage, complete game</li>
+              <li>Reservation gift: the Fox-Bone mask</li>
+            </ul>
+            <a class="pill edition__cta" href="#footer" data-preorder><span>Reserve <span data-platform-label>on PlayStation 5</span></span><span class="pill__icon" aria-hidden="true"><svg viewBox="0 0 10 10"><path d="M3 2h5v5M8 2L2 8" stroke="currentColor" stroke-width="1.2" fill="none" /></svg></span></a>
+          </div>
+        </article>
+        <article class="edition edition--featured">
+          <p class="edition__flag">Fan favourite</p>
+          <figure class="edition__art"><img src="media/editions/shadow.webp" alt="Shadow edition cover: the swordsman wreathed in hellfire" loading="lazy" decoding="async" /></figure>
+          <div class="edition__body">
+            <header class="edition__head"><h3>Shadow</h3><p class="edition__price">$84.99</p></header>
+            <ul class="edition__list">
+              <li>Everything in Wanderer</li>
+              <li>Hunt pass: three underworld expansions</li>
+              <li>Digital art book and score</li>
+              <li>Start playing 72 hours early</li>
+            </ul>
+            <a class="pill pill--light edition__cta" href="#footer" data-preorder><span>Reserve <span data-platform-label>on PlayStation 5</span></span><span class="pill__icon" aria-hidden="true"><svg viewBox="0 0 10 10"><path d="M3 2h5v5M8 2L2 8" stroke="currentColor" stroke-width="1.2" fill="none" /></svg></span></a>
+          </div>
+        </article>
+        <article class="edition">
+          <figure class="edition__art"><img src="media/editions/relic.webp" alt="Relic edition: a painted figure of the swordsman and a replica mask" loading="lazy" decoding="async" /></figure>
+          <div class="edition__body">
+            <header class="edition__head"><h3>Relic</h3><p class="edition__price">$229.99</p></header>
+            <ul class="edition__list">
+              <li>Everything in Shadow</li>
+              <li>32 cm hand-painted figure</li>
+              <li>Metal case and silk map of the 36 domains</li>
+              <li>Wearable replica demon mask</li>
+            </ul>
+            <a class="pill edition__cta" href="#footer" data-preorder><span>Reserve <span data-platform-label>on PlayStation 5</span></span><span class="pill__icon" aria-hidden="true"><svg viewBox="0 0 10 10"><path d="M3 2h5v5M8 2L2 8" stroke="currentColor" stroke-width="1.2" fill="none" /></svg></span></a>
+          </div>
+        </article>
+      </div>
+      <p class="editions__note">The reservation gift is included with every pact while stocks last. Prices in USD, taxes not included.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer grain" id="footer">
+    <div class="footer__top">
+      <form class="newsletter" data-newsletter novalidate>
+        <p class="section-label">Enter the shadow</p>
+        <p class="newsletter__lede">Field reports from the cursed realm: teasers, hunt nights and codex drops. No spam, ever.</p>
+        <div class="newsletter__field">
+          <label class="visually-hidden" for="nl-email">Email address</label>
+          <input id="nl-email" type="email" name="email" placeholder="you@domain.jp" autocomplete="email" required />
+          <button class="pill pill--light" type="submit">Take the vow</button>
+        </div>
+        <p class="newsletter__msg" data-newsletter-msg aria-live="polite"></p>
+      </form>
+      <nav class="footer__links" aria-label="Footer">
+        <div>
+          <p class="footer__head">Explore</p>
+          <a href="#realm">The realm</a>
+          <a href="#contracts">Blood contracts</a>
+          <a href="#way">Way of the blade</a>
+          <a href="#domains">The domains</a>
+          <a href="#pacts">Pacts</a>
+        </div>
+        <div>
+          <p class="footer__head">Follow</p>
+          <a href="#">Discord</a>
+          <a href="#">YouTube</a>
+          <a href="#">Instagram</a>
+          <a href="#">Twitch</a>
+        </div>
+        <div>
+          <p class="footer__head">Help</p>
+          <a href="#">Support</a>
+          <a href="#">Accessibility</a>
+          <a href="#">Media kit</a>
+          <a href="#">Jobs</a>
+        </div>
+      </nav>
+    </div>
+    <p class="footer__mark" aria-hidden="true" data-footer-mark>
+      <span class="footer__mark-line"><span>A</span><span>K</span><span>U</span><span>M</span><span>A</span><span class="footer__reg">®</span><span>K</span><span>A</span><span>G</span><span>E</span></span>
+    </p>
+    <div class="footer__bottom">
+      <p>© 2026 Akuma Kage Studio. All rights reserved.</p>
+      <p class="footer__rating"><span class="footer__badge">18+</span> Gore, violence, demons</p>
+      <nav class="footer__legal" aria-label="Legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></nav>
+      <button class="footer__top-btn" type="button" data-to-top>Return to top <span aria-hidden="true">↑</span></button>
+    </div>
+  </footer>
+
+  <!-- Site menu -->
+  <div class="menu" id="site-menu" data-menu hidden>
+    <nav class="menu__nav" aria-label="Sections">
+      <a href="#hero" data-menu-link><span class="menu__n">01</span><span class="menu__name">The demon</span></a>
+      <a href="#realm" data-menu-link><span class="menu__n">04</span><span class="menu__name">The realm</span></a>
+      <a href="#contracts" data-menu-link><span class="menu__n">05</span><span class="menu__name">Blood contracts</span></a>
+      <a href="#way" data-menu-link><span class="menu__n">06</span><span class="menu__name">Way of the blade</span></a>
+      <a href="#domains" data-menu-link><span class="menu__n">07</span><span class="menu__name">The domains</span></a>
+      <a href="#pacts" data-menu-link><span class="menu__n">08</span><span class="menu__name">Pacts</span></a>
+      <a href="#footer" data-menu-link><span class="menu__n">09</span><span class="menu__name">Enter the shadow</span></a>
+    </nav>
+    <p class="menu__foot section-label section-label--dim">Esc to close</p>
+  </div>
+
+  <!-- Teaser -->
+  <div class="trailer" data-trailer-modal hidden>
+    <button class="round-btn trailer__close" type="button" aria-label="Close teaser" data-trailer-close>
+      <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 3.5l5 5M8.5 3.5l-5 5" stroke="currentColor" stroke-width="1.2" /></svg>
+    </button>
+    <video class="trailer__video" muted playsinline preload="none" data-trailer-video></video>
+    <p class="trailer__caption section-label section-label--dim" data-trailer-caption></p>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
